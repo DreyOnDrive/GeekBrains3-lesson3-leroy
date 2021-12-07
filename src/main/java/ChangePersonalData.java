@@ -1,6 +1,5 @@
-
 import org.openqa.selenium.By;
-import org.openqa.selenium.Cookie;
+
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -9,56 +8,62 @@ import io.github.bonigarcia.wdm.WebDriverManager;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ChangePersonalData{
-    public static final String ANSI_RESET = "\u001B[0m";
+    public static final String ANSI_RESET = "\u001B[0m"; 
     public static final String ANSI_RED = "\u001B[31m";
     public static final String ANSI_GREEN = "\u001B[32m";
 
     public static boolean testCaseChangeDataSuccess = true;
     public static void main(String[] args) throws InterruptedException {
-        System.out.println();
-        if (!Registration.coockiesIsReady){
-            System.out.println(ANSI_RESET + "ТЕСТ-КЕЙС ИЗМЕНЕНИЕ ЛИЧНЫХ ДАННЫХ не может стартовать без coockies" + ANSI_RESET);
-            return;
-        } if (!Registration.testCaseRegistrationSuccess) {
-            System.out.println(ANSI_RESET + "ТЕСТ-КЕЙС ИЗМЕНЕНИЕ ЛИЧНЫХ ДАННЫХ не может стартовать без удачной регистрации" + ANSI_RESET);
-            return;
-        } else {
-            System.out.println(ANSI_RESET + "ТЕСТ-КЕЙС ИЗМЕНЕНИЕ ЛИЧНЫХ ДАННЫХ" + ANSI_RESET);
-        }
 
+        System.out.println(ANSI_RESET + "ТЕСТ-КЕЙС ИЗМЕНЕНИЕ ЛИЧНЫХ ДАННЫХ" + ANSI_RESET);
 
         WebDriverManager.chromiumdriver().setup();
         ChromeOptions options = new ChromeOptions();
         WebDriver driver = new ChromeDriver(options);
         driver.manage().window().maximize();
 
+        System.out.println("Предусловие: пользователь вошёл на сайт");
 
         try{
-            driver.get("https://spb.leroymerlin.ru/");
-            driver.manage().deleteAllCookies();
-            for (Cookie coockie : Registration.coockies) {
-                driver.manage().addCookie(coockie);
-            }
-            driver.navigate().to("https://spb.leroymerlin.ru/lk/");
+            driver.get("https://leroymerlin.ru/login");
+            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+            wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//iframe[@id='oauth-iframe']")));
+            driver.switchTo().frame("oauth-iframe");
+            driver.findElement(By.xpath("//input[@id=\"username\"]")).sendKeys("xowapi1@ineedsa.com");
+            driver.findElement(By.xpath("//input[@id=\"password\"]")).sendKeys("Aa123456");
+            driver.findElement(By.xpath("//input[@value=\"Войти\"]")).click();
+            System.out.println(ANSI_GREEN + "Страница входа - успех" + ANSI_GREEN);
+        } catch (Exception e){
+            System.out.println(ANSI_RED + "Страница входа - провал" + ANSI_RED);
+            testCaseChangeDataSuccess = false;
+        }
+
+
+        Thread.sleep(5000);
+
+
+        try {
+            driver.navigate().to("https://leroymerlin.ru/lk/");
+            driver.findElement(By.xpath("//ul[@class='lk-menu__nodes']//span[text()[contains(.,'Личные данные')]]")).click();
             System.out.println(ANSI_GREEN + "Переход в личный кабинет - успех" + ANSI_GREEN);
-        } catch (Exception e) {
+        }catch (Exception e) {
             System.out.println(ANSI_RED + "Переход в личный кабинет - провал" + ANSI_RED);
             testCaseChangeDataSuccess = false;
         }
 
-
-        try {
-            driver.findElement(By.xpath("//ul[@class='lk-menu__nodes']//span[text()[contains(.,'Личные данные')]]")).click();
-            System.out.println(ANSI_GREEN + "Вкладка изменения личных данных найдена - успех" + ANSI_GREEN);
-        }catch (Exception e) {
-            System.out.println(ANSI_RED + "Вкладка изменения личных данных НЕ найдена - провал" + ANSI_RED);
+        try{
+            WebDriverWait wait = new WebDriverWait(driver, 5);
+            wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//span[text()[contains(.,'Изменить персональные данные')]]")));
+            System.out.println(ANSI_GREEN + "Страница регистрации входа - успех" + ANSI_GREEN);
+        } catch (Exception e){
+            System.out.println(ANSI_RED + "Страница регистрации входа - провал" + ANSI_RED);
             testCaseChangeDataSuccess = false;
         }
-
 
         try {
             WebDriverWait wait = new WebDriverWait(driver, 5);

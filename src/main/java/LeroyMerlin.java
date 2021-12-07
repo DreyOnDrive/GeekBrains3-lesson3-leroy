@@ -1,10 +1,10 @@
 public class LeroyMerlin {
 //    указывайте пожалуйста emailIndex на 1 больше при каждом запуске
-    public static String emailIndex = "54";
+    public static String emailIndex = "72";
 
     public static void main(String[] args) throws InterruptedException {
         Registration.main(args);
-        ChangePersonalData.main(args);
+//        ChangePersonalData.main(args);
 
         System.out.println();
 

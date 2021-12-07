@@ -1,5 +1,4 @@
 import org.openqa.selenium.By;
-import org.openqa.selenium.Cookie;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -8,6 +7,7 @@ import io.github.bonigarcia.wdm.WebDriverManager;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,8 +17,6 @@ public class Registration {
     public static final String ANSI_GREEN = "\u001B[32m";
     static String index = LeroyMerlin.emailIndex;
     public static boolean testCaseRegistrationSuccess = true;
-    public static boolean coockiesIsReady = false;
-    public static List <Cookie> coockies = null;
 
     public static void main(String[] args){
 
@@ -28,7 +26,6 @@ public class Registration {
         ChromeOptions options = new ChromeOptions();
         WebDriver driver = new ChromeDriver(options);
         driver.manage().window().maximize();
-
 
         try{
             driver.get("https://spb.leroymerlin.ru/lk/register/");
@@ -177,7 +174,7 @@ public class Registration {
         try {
             List<String> tabs = new ArrayList<>(driver.getWindowHandles());
             driver.switchTo().window(tabs.get(1));
-            WebDriverWait wait = new WebDriverWait(driver, 5);
+            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
             wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//span[@class=\"rte-header\"]")));
             if(driver.findElement(By.xpath("//span[@class=\"rte-header\"]")).getText().equals("Согласие на обработку персональных данных")){
                 System.out.println(ANSI_GREEN + "Юридические документы открываются в новой вкладке - успех" + ANSI_GREEN);
@@ -208,21 +205,12 @@ public class Registration {
         }
 
         try {
-            WebDriverWait wait = new WebDriverWait(driver, 5);
+            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
             wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//span[@data-name ='purchase-history']")));
-            System.out.println(ANSI_GREEN + "Переход на страницу личного окабинета за 5 сек - успех" + ANSI_GREEN);
+            System.out.println(ANSI_GREEN + "Переход на страницу личного окабинета за 10 сек - успех" + ANSI_GREEN);
         } catch (Exception e) {
-            System.out.println(ANSI_RED + "Переход на страницу личного кабинета за 5 сек - провал" + ANSI_RED);
+            System.out.println(ANSI_RED + "Переход на страницу личного кабинета за 10 сек - провал" + ANSI_RED);
             testCaseRegistrationSuccess = false;
-        }
-
-
-        try {
-            coockies = new ArrayList <Cookie>((driver.manage().getCookies()));
-            coockiesIsReady = true;
-            System.out.println(ANSI_GREEN + "Coocies для следующего теста получены - успех" + ANSI_GREEN);
-        } catch (Exception e) {
-            System.out.println(ANSI_RED + "Coocies для следующего теста НЕ получены - провал" + ANSI_RED);
         }
 
         driver.quit();
